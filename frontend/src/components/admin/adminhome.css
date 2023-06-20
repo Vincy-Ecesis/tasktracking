@@ -19,12 +19,12 @@
     color:#000;
 }
 .add-user-link{
-    background-color: #000;
+    background: linear-gradient(to right,#372c3a,#e14f80);
     color:#fff;
     font-size:18px;
     width:100px;
-    border-radius: 4px;
-    padding:6px;
+    border-radius: 25px;
+    padding:10px 20px;
     text-decoration: none;
     text-align: center;
 }
@@ -39,9 +39,37 @@
 }
 
 .nav-link {
-    color: rgba(255,255,255,.55);
+    color:#fff !important;
+    cursor: pointer;
 }
 
 .table-content{
     margin:0 30px;
+}
+
+.nav{
+
+    color:#e14f80 !important;
+    font-size: 24px !important;
+    padding-left: 20px;
+}
+
+.add-project-link{
+    background: linear-gradient(to right,#372c3a,#e14f80);
+    color:#fff;
+    font-size:18px;
+    width:200px;
+    border-radius: 25px;
+    padding:10px 20px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.search-add{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.search-bar{
+    margin:50px 0px;
 }

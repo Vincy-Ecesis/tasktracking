@@ -20,7 +20,7 @@ const Navbarheader = () => {
 
             <Navbar className='navbar-section' variant="dark">
                
-                    <Navbar.Brand href="#home">Daily Task Management</Navbar.Brand>
+                    <Navbar.Brand href="#home" className='tasktracking-heading'>Task Tracking</Navbar.Brand>
                     <Nav className="me-auto">
                         {/* <Nav.Link href="/">Home</Nav.Link> */}
                         {/* <Nav.Link href="#features">Features</Nav.Link>

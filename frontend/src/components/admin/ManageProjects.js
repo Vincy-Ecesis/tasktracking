@@ -7,7 +7,10 @@ import { RiDeleteBin6Line } from 'react-icons/ri'
 import { RiEdit2Line } from 'react-icons/ri'
 import { BsSearch } from 'react-icons/bs'
 import { Link } from 'react-router-dom';
+import { AiOutlineClose } from 'react-icons/ai'
+
 import AddProjectForm from '../AddProjects/AddProjects';
+import './manageproject.css';
 
 
 const ViewProject = () => {
@@ -25,7 +28,6 @@ const ViewProject = () => {
 
   const [projects, setProjects] = useState();
   const [showaddproject, setShowaddproject] = useState();
-
 
   const [users, setUsers] = useState();
   //   users=this.state.users;
@@ -49,18 +51,16 @@ const ViewProject = () => {
 
         // });
 
-        var projectDetails = res.data.projects, i=0;
+        var projectDetails = res.data.projects, i = 0;
 
         projectDetails.forEach(element => {
 
           //console.log("Element", element);
 
-          if(element.assignto != undefined)
-          {
+          if (element.assignto != undefined) {
             projectDetails[i].assignto = element.assignto.firstname;
           }
-          else
-          {
+          else {
             projectDetails[i].assignto = "";
           }
 
@@ -68,10 +68,10 @@ const ViewProject = () => {
 
         });
 
-        
+
         setProjects(projectDetails)
         //this.state.users.sort();
-       //console.log("Error varaatha code", projectDetails);
+        //console.log("Error varaatha code", projectDetails);
         // window.processData("mydata");l
       }
     });
@@ -121,7 +121,7 @@ const ViewProject = () => {
       project.description.toLowerCase().includes(searchTerm.toLowerCase())
 
     )
-    console.log(result)
+   
     // this.setState({ projects: result });
 
     setProjects(result)
@@ -184,30 +184,26 @@ const ViewProject = () => {
 
     <>
 
-      {!showaddproject && (
+    
         <div className='"table table-striped"' style={{ marginTop: "20px" }}>
           <div className='manage d-flex justify-content-center'>
             <div className='manage-heading' >Manage Projects</div>
           </div>
 
-          <div style={{ marginTop: '30px' }}>
-
-            <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShowaddproject(!showaddproject)}>Add Project</a>
-
+          <div className='search-add'>
+            <div className='search-bar'>
+              {/* <label>Search  <BsSearch /></label>&nbsp; */}
+              <input type="search"
+                placeholder="search..."
+                name='searchTerm'
+                onChange={handleTextSearch} />
+            </div>
+            <div>
+              <a className='add-project-link' onClick={() => setShowaddproject(!showaddproject)}>Add Project</a>
+            </div>
           </div>
 
-          <br />&nbsp;
-          <div style={{
-            width: '100%', height: '40px'
-          }}>
-            <label>Search Here <BsSearch /></label>&nbsp;
-            <input type="search"
-              placeholder="search..."
-              name='searchTerm'
-              onChange={handleTextSearch} />
 
-          </div>
-          <br />
 
           <Table striped bordered hover variant="dark">
             <thead>
@@ -215,7 +211,7 @@ const ViewProject = () => {
                 <th >Project Name</th>
                 <th >Description</th>
                 <th>Assigned to</th>
-                <th >Project Image</th>
+                {/* <th >Project Image</th> */}
                 <th>Edit</th>
                 <th>Delete</th>
               </tr>
@@ -228,7 +224,7 @@ const ViewProject = () => {
                       <td>{projects.projectname}</td>
                       <td>{projects.description}</td>
                       <td>{projects.assignto}</td>
-                      <td>{projects.projectimage}</td>
+                      {/* <td>{projects.projectimage}</td> */}
                       <td><a className='btn btn-warning'
                         href={`/editproject/${projects._id}`}
                       ><RiEdit2Line />
@@ -249,18 +245,21 @@ const ViewProject = () => {
           </Table>
 
         </div>
-      )}
+     
 
       {showaddproject && (
         <>
-          <div style={{ marginTop: '30px' }}>
+          {/* <div style={{ marginTop: '30px' }}>
             <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShowaddproject(!showaddproject)}>Manage Projects</a>
-          </div>
+          </div> */}
           {/* <AddProjectForm /> */}
 
 
           <div className="container add-project">
             <div className="app-wrapper">
+              <div className='close-icon' onClick={()=> setShowaddproject(!showaddproject)}>
+             <AiOutlineClose/>
+              </div>
               <div>
                 <h2 className="title" style={{ marginTop: '10px' }}>
                   Create Project
@@ -302,13 +301,13 @@ const ViewProject = () => {
                       value={inputs.assignto}
                       onChange={handleChange}
                       placeholder="Role"
-                      style={{ width: '400px', height: '40px' }} >
+                      >
                       {
-                       
-                       users.map(users =>
-                           
-                              <option value={users._id}>{users.firstname}</option>
-                          )
+
+                        users.map(users =>
+
+                          <option value={users._id}>{users.firstname}</option>
+                        )
                       }
                     </select>
                   </div>
@@ -316,17 +315,17 @@ const ViewProject = () => {
 
                 {/* image upload */}
 
-                <div>
+                {/* <div>
                   <label >Project Image</label>
                   <input type="file" name="projectImage"
-                    onChange={handleImage} />
+                    onChange={handleImage} /> */}
                   {/* {values &&
                                 <div>
                                     <span>{values.projectImage}</span>
                                     <img src={URL.createObjectURL(file)} />
                                 </div>
                             } */}
-                </div>
+                {/* </div> */}
 
                 <button type="submit" className="submit" onClick={handleFormSubmit} >
                   Add Project

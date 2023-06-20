@@ -11,12 +11,15 @@ const AddProjectForm = ({ submitForm }) => {
 
     return (
         <>
-            <div className="container add-project">
+            <div className="add-project">
                 <div className="app-wrapper">
                     <div>
                         <h2 className="title" style={{ marginTop: '10px' }}>
                             Create Project
                         </h2>
+                    </div>
+                    <div>
+                        
                     </div>
 
                     <form   method="post" enctype="multipart/form-data" >

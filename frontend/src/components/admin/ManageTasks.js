@@ -8,6 +8,7 @@ import { RiEdit2Line } from 'react-icons/ri'
 import { BsSearch } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom';
 import AddTask from '../AddTask/AddTask';
+import { AiOutlineClose } from 'react-icons/ai'
 
 
 function ViewTasks() {
@@ -63,6 +64,7 @@ function ViewTasks() {
 
   useEffect(() => {
     getTasks();
+    getProjects();
   }, [])
 
 
@@ -105,6 +107,8 @@ function ViewTasks() {
 
   }
 
+  const [projects, setProjects] = useState();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("hhh", inputs)
@@ -120,6 +124,48 @@ function ViewTasks() {
 
       })
   }
+
+
+  //get All Users
+  const getProjects = () => {
+    axios.get('http://localhost:8000/projects').then(res => {
+
+      if (res.data.success) {
+        // this.setState({
+        //   projects: res.data.projects,
+
+        // });
+
+        var projectDetails = res.data.projects, i = 0;
+
+        console.log("projecrs",res.data)
+
+        projectDetails.forEach(element => {
+
+          //console.log("Element", element);
+
+          if (element.projectname != undefined) {
+            projectDetails[i].projectname = element.projectname;
+          }
+          else {
+            projectDetails[i].projectname = "";
+          }
+
+          i++;
+
+        });
+
+
+        setProjects(projectDetails)
+        //this.state.users.sort();
+        //console.log("Error varaatha code", projectDetails);
+        // window.processData("mydata");l
+      }
+    });
+  }
+
+
+
   return (
 
     <>
@@ -127,30 +173,24 @@ function ViewTasks() {
       {/* <h1 className="form-success mt-5">Welcome Admin ! </h1> */}
       <div style={{ marginTop: '30px' }}>
       </div>
-      {!show && (
+      {/* {!show && ( */}
         <div className='"table table-striped"'>
           <div className='manage d-flex justify-content-center'>
             <div className='manage-heading' >Manage Tasks</div>
           </div>
-          <br />&nbsp;
-          <div style={{ marginTop: '30px' }}>
-
-            <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShow(!show)} >Add Task</a>
-
+          {/* <br />&nbsp; */}
+          <div className='search-add'>
+            <div >
+              {/* <label>Search Here <BsSearch /></label>&nbsp; */}
+              <input type="search"
+                placeholder="search..."
+                name='searchTerm'
+                onChange={handleTextSearch} />
+            </div>
+            <div className='search-bar'>
+              <a className='add-user-link' onClick={() => setShow(!show)} >Add Task</a>
+            </div>
           </div>
-
-          <div style={{
-            width: '100%', height: '40px'
-          }}>
-            <label>Search Here <BsSearch /></label>&nbsp;
-            <input type="search"
-              placeholder="search..."
-              name='searchTerm'
-              onChange={handleTextSearch} />
-
-          </div>
-
-          <br />
 
           <Table striped bordered hover variant="dark">
             <thead>
@@ -181,52 +221,74 @@ function ViewTasks() {
           </Table>
 
         </div>
-      )}
+      {/* )} */}
 
       {show && (
         <>
 
-          <div style={{ marginTop: '30px' }}>
+          {/* <div style={{ marginTop: '30px' }}>
 
             <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShow(!show)}>Manage Tasks</a>
 
-          </div>
+          </div> */}
 
           {/* <AddTask /> */}
 
-          <div className="container register-section">
-                <div className="app-wrapper">
-                    <div>
-                        <h2 className="title" style={{ marginTop: '10px' }}>
-                            Daily Task
-                        </h2>
-                    </div>
+          <div className="add-project">
+            <div className="app-wrapper">
+            <div className='close-icon' onClick={()=> setShow(!show)}>
+             <AiOutlineClose/>
+              </div>
+              <div>
+                <h2 className="title" style={{ marginTop: '10px' }}>
+                  Daily Task
+                </h2>
+              </div>
+              <form onSubmit={handleSubmit}>
+                <label>Enter your name:
+                  <input
+                    type="text"
+                    name="username"
+                    id="create-account-firstname"
+                    className="input"
+                    value={inputs.username || ""}
+                    onChange={handleChange}
+                  />
+                </label>
+                <br />
+               
+                  <label >Project</label>
+                  
+                  <div >
+                    <select type="text"
+                      name="project"
+                      className='input'
+                      value={inputs.project}
+                      onChange={handleChange}
+                      placeholder="Role"
+                      >
+                      {
 
-                    <form onSubmit={handleSubmit}>
-                        <label>Enter your name:
-                            <input
-                                type="text"
-                                name="username"
-                                id="create-account-firstname"
-                                className="input"
-                                value={inputs.username || ""}
-                                onChange={handleChange}
-                            />
-                        </label>
-                        <br />
-                        <label>Enter your daily task:
-                            <input
-                                type="text"
-                                name="dailytask"
-                                id="create-account-firstname"
-                                className="input"
-                                value={inputs.dailytask || ""}
-                                onChange={handleChange}
-                            />
-                        </label>
-                        <br />
-                        <label>Enter Estimated time:
-                            {/* <input
+                        projects.map(projects =>
+
+                          <option value={projects._id}>{projects.projectname}</option>
+                        )
+                      }
+                    </select>
+                  </div>
+                <label>Enter  task:
+                  <input
+                    type="text"
+                    name="dailytask"
+                    id="create-account-firstname"
+                    className="input"
+                    value={inputs.dailytask || ""}
+                    onChange={handleChange}
+                  />
+                </label>
+                <br />
+                <label>Enter Estimated time:
+                  {/* <input
                                 type="number"
                                 name="time"
                                 className="input"
@@ -234,19 +296,16 @@ function ViewTasks() {
                                 onChange={handleChange}
                             /> */}
 
-                            <input type="datetime-local"  name="estimatedtime" value={inputs.estimatedtime} onChange={handleChange}/>
-                        </label>
-                        <br />
-                        <button type="submit" className="submit"  >
-                            Add Task
-                        </button>
-                    </form>
-                </div>
+                  <input type="datetime-local" name="estimatedtime" value={inputs.estimatedtime} onChange={handleChange} />
+                </label>
+                <br />
+                <button type="submit" className="submit"  >
+                  Add Task
+                </button>
+              </form>
             </div>
-
+          </div>
         </>
-
-
       )}
     </>
   )

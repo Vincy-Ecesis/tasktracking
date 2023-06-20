@@ -33,7 +33,7 @@ const AdminHome = () => {
                     <Col sm={2} className="tab-components">
                         <Nav variant="pills" className="flex-column">
                             <Nav.Item>
-                                <Nav.Link eventKey="first">Home</Nav.Link>
+                                <Nav.Link className='manage-link' eventKey="first">Home</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link eventKey="second">Manage Users</Nav.Link>

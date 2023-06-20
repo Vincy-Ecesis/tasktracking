@@ -129,25 +129,20 @@ const Admin = () => {
           <div className='manage d-flex justify-content-center'>
             <div className='manage-heading' >Manage Users</div>
           </div>
-          <br />&nbsp;
-          <div style={{ marginTop: '30px' }}>
-
-            <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShowadduser(!showadduser)} >Add User</a>
-
+          {/* <br />&nbsp; */}
+          <div className='search-add'>
+           
+            <div>
+              {/* <label>Search Here <BsSearch /></label>&nbsp; */}
+              <input type="search"
+                placeholder="search..."
+                name='searchTerm'
+                onChange={handleTextSearch} />
+            </div>
+            <div className='search-bar'>
+              <a className='add-user-link' onClick={() => setShowadduser(!showadduser)} >Add User</a>
+            </div>
           </div>
-
-          <div style={{
-            width: '100%', height: '40px'
-          }}>
-            <label>Search Here <BsSearch /></label>&nbsp;
-            <input type="search"
-              placeholder="search..."
-              name='searchTerm'
-              onChange={handleTextSearch} />
-
-          </div>
-          <br />
-          <br />
 
           <Table striped bordered hover variant="dark">
             <thead>
@@ -196,84 +191,84 @@ const Admin = () => {
           <div style={{ marginTop: '30px' }}>
             <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShowadduser(!showadduser)}>Manage Users</a>
           </div>
-         
+
 
 
 
 
           <div className="container register-section">
-                <div className="app-wrapper">
-                    <div>
-                        <h2 className="title" style={{ marginTop: '10px' }}>
-                            Create User
-                        </h2>
-                    </div>
-                    <form >
-                        <div className="firstname">
-                            <label > Name</label>
-                            <input type="text"
-                                id="create-account-firstname"
-                                className="input"
-                                name="firstname"
-                                value={inputs.firstname}
-                                onChange={handleChange}
-                                placeholder="Name" />
-                        </div>
-                        {/* {errors.firstname && <p className="error">{errors.firstname}</p>} */}
-                        <div className="lastname">
-                            <label >User Name</label>
-                            <input type="text"
-                                id="create-account-lastname"
-                                className="input"
-                                name="lastname"
-                                value={inputs.lastname}
-                                onChange={handleChange}
-                                placeholder="User Name" />
-                        </div>
-                        {/* {errors.lastname && <p className="error">{errors.lastname}</p>} */}
-                        <div className="email">
-                            <label >Email</label>
-                            <input type="email"
-                                id="create-account-email"
-                                className="input"
-                                name="email"
-                                value={inputs.email}
-                                onChange={handleChange}
-                                placeholder="Email" />
-                        </div>
-                     
-                        <div className="role">
-                            <label >Role</label>
-                            <br />
-                            <div >
-                                <select type="text"
-                                    name="role"
-                                    className='input'
-                                    value={inputs.role}
-                                    onChange={handleChange}
-                                    placeholder="Role"
-                                    style={{ width: '400px', height: '40px' }} >
-                                    <option value="0" style={{ color: 'black' }} className='input'>Choose Your Role</option>
-                                    <option style={{ color: "black" }} value="Admin" className='input'>Admin</option>
-                                    <option style={{ color: "black" }} value="User" className='input'>User</option>
+            <div className="app-wrapper">
+              <div>
+                <h2 className="title" style={{ marginTop: '10px' }}>
+                  Create User
+                </h2>
+              </div>
+              <form >
+                <div className="firstname">
+                  <label > Name</label>
+                  <input type="text"
+                    id="create-account-firstname"
+                    className="input"
+                    name="firstname"
+                    value={inputs.firstname}
+                    onChange={handleChange}
+                    placeholder="Name" />
+                </div>
+                {/* {errors.firstname && <p className="error">{errors.firstname}</p>} */}
+                <div className="lastname">
+                  <label >User Name</label>
+                  <input type="text"
+                    id="create-account-lastname"
+                    className="input"
+                    name="lastname"
+                    value={inputs.lastname}
+                    onChange={handleChange}
+                    placeholder="User Name" />
+                </div>
+                {/* {errors.lastname && <p className="error">{errors.lastname}</p>} */}
+                <div className="email">
+                  <label >Email</label>
+                  <input type="email"
+                    id="create-account-email"
+                    className="input"
+                    name="email"
+                    value={inputs.email}
+                    onChange={handleChange}
+                    placeholder="Email" />
+                </div>
 
-                                </select>
-                                </div>
-                        </div>
-                       
-                        <div className="password">
-                            <label >Password</label>
-                            <input type="password"
-                                id="create-account-password"
-                                className="input"
-                                name="password"
-                                value={inputs.password}
-                                onChange={handleChange}
-                                placeholder="password" />
+                <div className="role">
+                  <label >Role</label>
+                  <br />
+                  <div >
+                    <select type="text"
+                      name="role"
+                      className='input'
+                      value={inputs.role}
+                      onChange={handleChange}
+                      placeholder="Role"
+                      style={{ width: '400px', height: '40px' }} >
+                      <option value="0" style={{ color: 'black' }} className='input'>Choose Your Role</option>
+                      <option style={{ color: "black" }} value="Admin" className='input'>Admin</option>
+                      <option style={{ color: "black" }} value="User" className='input'>User</option>
 
-                        </div>
-                      
-                        {/* <div className="cpassword">
+                    </select>
+                  </div>
+                </div>
+
+                <div className="password">
+                  <label >Password</label>
+                  <input type="password"
+                    id="create-account-password"
+                    className="input"
+                    name="password"
+                    value={inputs.password}
+                    onChange={handleChange}
+                    placeholder="password" />
+
+                </div>
+
+                {/* <div className="cpassword">
                             <label >Confirm Password</label>
                             <input type="password"
                                 id="create-account-cpassword"
@@ -288,14 +283,14 @@ const Admin = () => {
 
 
 
-                        <button type="submit" className="submit" onClick={handleSubmit} >
-                         Add User
-                        </button>
-                        <br />
+                <button type="submit" className="submit" onClick={handleSubmit} >
+                  Add User
+                </button>
+                <br />
 
-                    </form>
-                </div>
+              </form>
             </div>
+          </div>
 
         </>
       )}

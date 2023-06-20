@@ -41,22 +41,17 @@ function App() {
             {/* <Route path="/" element={<Homepage  />} exact /> */}
             <Route path="/" element={<Login setLoginUser={setLoginUser} />} exact />
             <Route path="/adduser" element={<AddUser />} exact />
+            <Route path="/register" element={<AddUser />} exact />
             <Route path="/LoginSuccess" element={<LoginSuccess />} exact />
             <Route path="/RegisterSuccess" element={<RegisterSuccess />} exact />
             <Route path="/admin" element={<AdminHome />} exact />
             <Route path="/logout" element={<logout />} exact />
             <Route path="/edituser/:id" element={<EditUser />} exact />
-          
             <Route path="/tasks" element={<ViewTasks />} exact />
             <Route path="/addprojects" element={<AddProjectForm />} exact />
             <Route path="/editproject/:id" element={<EditProjects />} exact />
-
-
             <Route path="/user" element={<UserHome />} exact />
-
-
             <Route path="/addtask" element={<AddTask/>} exact />
-
           </Fragment>
         </Routes>
       </Router>

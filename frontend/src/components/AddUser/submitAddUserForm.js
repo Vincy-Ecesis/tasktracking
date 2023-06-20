@@ -49,7 +49,17 @@ const useForm = (submitForm) => {
                         console.log(res.data)
                         //localStorage.setItem('currentUser', JSON.stringify(res.data))
                         // getUsers();
-                        navigate('/admin')
+                        if (res.data.user.role === 'Admin') {
+                            //localStorage.setItem('currentUser', JSON.stringify(res.data))
+                            navigate('/admin')
+        
+                        }
+                        else {
+                            //localStorage.setItem('currentUser', JSON.stringify(res.data))
+                            navigate("/user")
+        
+                        }
+                        // navigate('/admin')
 
                     } else {
                         

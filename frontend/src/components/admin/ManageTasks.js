@@ -25,7 +25,8 @@ function ViewTasks() {
   // }
 
   const [tasks, setTasks] = useState();
-
+  const [status, setStatus] = useState();
+  const [selectedValue, setSelectedValue] = useState([]);
   const [show, setShow] = useState(false);
 
 
@@ -42,42 +43,36 @@ function ViewTasks() {
   //   this.getTasks();
   // }
 
-  //get All tasks
-  const getTasks = () => {
-    axios.get('http://localhost:8000/tasks').then(res => {
-
-      if (res.data.success) {
-        // this.setState({
-        //   tasks: res.data.tasks,
-
-
-        // });
-
-        console.log("tasks", res.data.tasks);
-        setTasks(res.data.tasks)
-        //this.state.users.sort();
-        console.log("hgghhg", tasks);
-
-      }
-    });
-  }
 
   useEffect(() => {
     getTasks();
     getProjects();
+   
+     
   }, [])
 
 
+ //get All tasks
+ const getTasks = () => {
+  axios.get('http://localhost:8000/tasks').then(res => {
 
+    if (res.data.success) {
+      setTasks(res.data.tasks)
+      //this.state.users.sort();
+    }
+  });
+}
 
   //filter function for searching
   const filterContent = (tasks, searchTerm) => {
-    console.log(tasks)
+    
+    
     const result = tasks.tasks.filter((task) => task.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.dailytask.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.date.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    console.log(result)
+ 
+    
     // this.setState({ tasks: result });
     setTasks(result)
   }
@@ -87,7 +82,8 @@ function ViewTasks() {
 
     const searchTerm = event.currentTarget.value;
     axios.get('http://localhost:8000/tasks').then(res => {
-      console.log(res.data)
+    
+    
       if (res.data.success) {
         filterContent(res.data, searchTerm)
       }
@@ -108,15 +104,16 @@ function ViewTasks() {
   }
 
   const [projects, setProjects] = useState();
+  const [selectedOption, setSelectedOption] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("hhh", inputs)
     axios.post("http://localhost:8000/dailytask", inputs)
       .then(res => {
 
         alert(res.data.message)
-        console.log(res.data)
+      
+        
         //localStorage.setItem('currentUser', JSON.stringify(res.data))
         // navigate('/admin')
         setShow(!show);
@@ -133,13 +130,10 @@ function ViewTasks() {
       if (res.data.success) {
         // this.setState({
         //   projects: res.data.projects,
-
         // });
-
         var projectDetails = res.data.projects, i = 0;
 
-        console.log("projecrs",res.data)
-
+    
         projectDetails.forEach(element => {
 
           //console.log("Element", element);
@@ -166,6 +160,27 @@ function ViewTasks() {
 
 
 
+  const statusChange = (event, id) => {
+    event.persist();
+    const value = event.target.value;
+
+    //convert it in object
+    let selectedValue = {
+      status: value
+     
+    };
+    setStatus(selectedValue);
+    axios.put(`http://localhost:8000/dailytaskStatus/update/${id}`,selectedValue).then(res => {
+    
+      if (res.data.success) {
+        setStatus(res.data.data.status);
+        getTasks();
+      }
+    })
+  }
+
+
+
   return (
 
     <>
@@ -174,53 +189,64 @@ function ViewTasks() {
       <div style={{ marginTop: '30px' }}>
       </div>
       {/* {!show && ( */}
-        <div className='"table table-striped"'>
-          <div className='manage d-flex justify-content-center'>
-            <div className='manage-heading' >Manage Tasks</div>
-          </div>
-          {/* <br />&nbsp; */}
-          <div className='search-add'>
-            <div >
-              {/* <label>Search Here <BsSearch /></label>&nbsp; */}
-              <input type="search"
-                placeholder="search..."
-                name='searchTerm'
-                onChange={handleTextSearch} />
-            </div>
-            <div className='search-bar'>
-              <a className='add-user-link' onClick={() => setShow(!show)} >Add Task</a>
-            </div>
-          </div>
-
-          <Table striped bordered hover variant="dark">
-            <thead>
-              <tr>
-                <th >Name</th>
-                <th >Daily Task</th>
-                <th >Due Date</th>
-
-              </tr>
-            </thead>
-            <tbody>
-              {
-                tasks != undefined ? (
-                  tasks.map(tasks =>
-                    <tr key={tasks._id}>
-                      <td>{tasks.username}</td>
-                      <td>{tasks.dailytask}</td>
-                      <td>{tasks.estimatedtime}</td>
-                    </tr>
-
-                  )
-                )
-                  : (
-                    <tr>No data</tr>
-                  )
-              }
-            </tbody>
-          </Table>
-
+      <div className='"table table-striped"'>
+        <div className='manage d-flex justify-content-center'>
+          <div className='manage-heading' >Manage Tasks</div>
         </div>
+        {/* <br />&nbsp; */}
+        <div className='search-add'>
+          <div >
+            {/* <label>Search Here <BsSearch /></label>&nbsp; */}
+            <input type="search"
+              placeholder="search..."
+              name='searchTerm'
+              onChange={handleTextSearch} />
+          </div>
+          <div className='search-bar'>
+            <a className='add-user-link' onClick={() => setShow(!show)} >Add Task</a>
+          </div>
+        </div>
+
+        <Table striped bordered hover variant="dark">
+          <thead>
+            <tr>
+              <th >Name</th>
+              <th >Task</th>
+              <th >Project</th>
+              <th >Due Date</th>
+              <th >Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              tasks != undefined ? (
+                tasks.map(tasks =>
+                  <tr key={tasks._id} className={tasks.status==3 ?"completed-task":"normal-task"}>
+                    
+                    <td>{tasks.username}</td>
+                    <td>{tasks.dailytask}</td>
+                    <td>{tasks.project}</td>
+                    <td>{tasks.estimatedtime}</td>
+                    <td><button><select type="number" name="status" value={tasks.status}
+                      onChange={(event) => statusChange(event, tasks._id)}
+                    >
+                      <option value="">Select</option>
+                      <option value="0">Open</option>
+                      <option value="1">InProgress</option>
+                      <option value="2">Onhold</option>
+                      <option value="3">Completed</option>
+                    </select></button></td>
+                  </tr>
+                )
+              )
+                : (
+                  <tr>No data</tr>
+                )
+            }
+          </tbody>
+        </Table>
+
+      </div>
       {/* )} */}
 
       {show && (
@@ -236,8 +262,8 @@ function ViewTasks() {
 
           <div className="add-project">
             <div className="app-wrapper">
-            <div className='close-icon' onClick={()=> setShow(!show)}>
-             <AiOutlineClose/>
+              <div className='close-icon' onClick={() => setShow(!show)}>
+                <AiOutlineClose />
               </div>
               <div>
                 <h2 className="title" style={{ marginTop: '10px' }}>
@@ -245,7 +271,8 @@ function ViewTasks() {
                 </h2>
               </div>
               <form onSubmit={handleSubmit}>
-                <label>Enter your name:
+                <div className="input-name">
+                  <label>Enter your name:  </label>
                   <input
                     type="text"
                     name="username"
@@ -254,11 +281,39 @@ function ViewTasks() {
                     value={inputs.username || ""}
                     onChange={handleChange}
                   />
-                </label>
-                <br />
-               
-                  <label >Project</label>
-                  
+
+                </div>
+                <div className="input-name">
+                  <label >Enter the Project</label>
+                  <div >
+                    <select type="text"
+                      name="project"
+                      className='input'
+                      value={inputs.project}
+                      onChange={handleChange}
+                      placeholder="Role"
+                    >
+                      {
+                        projects.map(projects =>
+                          <option value={projects.projectname}>{projects.projectname}</option>
+                        )
+                      }
+                    </select>
+                  </div>
+                </div>
+                <div className="input-name">
+                  <label>Enter  task:</label>
+                  <input
+                    type="text"
+                    name="dailytask"
+                    id="create-account-firstname"
+                    className="input"
+                    value={inputs.dailytask || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+                {/* <div>
+                  <label >Assigned To:</label>
                   <div >
                     <select type="text"
                       name="project"
@@ -268,26 +323,15 @@ function ViewTasks() {
                       placeholder="Role"
                       >
                       {
-
                         projects.map(projects =>
-
                           <option value={projects._id}>{projects.projectname}</option>
                         )
                       }
                     </select>
                   </div>
-                <label>Enter  task:
-                  <input
-                    type="text"
-                    name="dailytask"
-                    id="create-account-firstname"
-                    className="input"
-                    value={inputs.dailytask || ""}
-                    onChange={handleChange}
-                  />
-                </label>
-                <br />
-                <label>Enter Estimated time:
+                  </div> */}
+               <div className="input-name">
+                  <label>Enter Estimated time:</label>
                   {/* <input
                                 type="number"
                                 name="time"
@@ -296,9 +340,25 @@ function ViewTasks() {
                                 onChange={handleChange}
                             /> */}
 
-                  <input type="datetime-local" name="estimatedtime" value={inputs.estimatedtime} onChange={handleChange} />
-                </label>
-                <br />
+                  <input type="datetime-local" name="estimatedtime" className='input' value={inputs.estimatedtime} onChange={handleChange} />
+
+                </div>
+                {/* <div>
+                  <label>Status</label>
+                  <div >
+                    <select type="number"
+                      name="status"
+                      className='input'
+                      value={inputs.status}
+                      placeholder="status"
+                    >
+                      <option value="">Select</option>
+                      <option value="0">InProgress</option>
+                      <option value="1">Onhold</option>
+                      <option value="2">Completed</option>
+                    </select>
+                  </div>
+                </div> */}
                 <button type="submit" className="submit"  >
                   Add Task
                 </button>

@@ -192,10 +192,6 @@ const Admin = () => {
             <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShowadduser(!showadduser)}>Manage Users</a>
           </div>
 
-
-
-
-
           <div className="container register-section">
             <div className="app-wrapper">
               <div>
@@ -251,7 +247,6 @@ const Admin = () => {
                       <option value="0" style={{ color: 'black' }} className='input'>Choose Your Role</option>
                       <option style={{ color: "black" }} value="Admin" className='input'>Admin</option>
                       <option style={{ color: "black" }} value="User" className='input'>User</option>
-
                     </select>
                   </div>
                 </div>
@@ -265,7 +260,6 @@ const Admin = () => {
                     value={inputs.password}
                     onChange={handleChange}
                     placeholder="password" />
-
                 </div>
 
                 {/* <div className="cpassword">
@@ -287,17 +281,11 @@ const Admin = () => {
                   Add User
                 </button>
                 <br />
-
               </form>
             </div>
           </div>
-
         </>
       )}
-
-
-
-
     </>
   )
 }

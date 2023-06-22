@@ -20,3 +20,28 @@
     float: right;
     cursor: pointer;
 }
+
+
+/* manage task */
+.input-name{
+padding:10px;
+}
+
+.completed-task{
+ 
+    text-decoration: 3px line-through #d11010;
+}
+
+/* tr.completed-task td:before {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    border-bottom: 1px solid #111;
+    width: 100%;
+} */
+
+.assignee-modal{
+    width:300px;
+    height:auto;
+}

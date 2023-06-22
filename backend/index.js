@@ -26,6 +26,8 @@ const taskSchema = new mongoose.Schema({
     // _id:String,
     username: String,
     dailytask: String,
+    project: String,
+    status:Number,
     date: {
         type: Date,
         default: Date.now
@@ -62,10 +64,10 @@ const projectSchema = new mongoose.Schema({
     description: String,
     projectImage: String,
     // assignto: String,
-    assignto:{
-        type:mongoose.Schema.Types.ObjectId, ref:'User'
-     },
-   
+    options: [{
+        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+    }],
+
 })
 const Project = new mongoose.model("Project", projectSchema)
 
@@ -83,7 +85,7 @@ app.post("/Login", (req, res) => {
                     res.send({ message: "login successfully", user: user })
                 }
                 else {
-                    
+
                     res.status = false
                     res.send({ message: "wrong credentials" })
                 }
@@ -98,7 +100,7 @@ app.post("/Login", (req, res) => {
 
 //Add User or register 
 app.post("/adduser", (req, res) => {
-  
+
     const { firstname, lastname, role, email, password } = req.body;
     User.findOne({ email: email }, (err, user) => {
         if (user) {
@@ -128,12 +130,15 @@ app.post("/adduser", (req, res) => {
 
 //Add Projects
 app.post("/addproject", (req, res) => {
-    const { projectname, description,assignto } = req.body;
+
+    console.log("reques",req.body.body,JSON.parse(req.body.body));
+    
+    const { projectname, description,options}= JSON.parse(req.body.body);
+    console.log("assign to",options);
     const project = new Project({
         projectname,
         description,
-        assignto,
-
+        options,
     })
     project.save(
         res.send({ message: "Project Added Successfully.", project: project })
@@ -144,25 +149,58 @@ app.post("/addproject", (req, res) => {
 
 //Add Daily tasks
 app.post("/dailytask", (req, res) => {
-    const { username, dailytask, estimatedtime, } = req.body;
-
+    const { username, dailytask, project, estimatedtime,status } = req.body;
     console.log("req.body", req.body);
-
     const date = new Date();
-
     const task = new Task({
         username,
         dailytask,
+        project,
         estimatedtime,
+        status,
         date
     })
     task.save(
         res.send({ message: "Successfully Registered.", task: task })
     )
-
-    console.log("daily task", task)
-
+    console.log("daily task", task);
 })
+
+
+//update the tasks by id
+app.put("/dailytaskStatus/update/:id", async (req, res) => {
+
+    // console.log(id)
+    const updateId = req.params.id;
+    // const  status  = req.body.status;
+    console.log("status node",req.body.status)
+    try {
+
+        const updateStatus = await Task.findByIdAndUpdate(updateId, {
+
+            $set: {
+               status: req.body.status                
+            }
+        },{ new: true });
+
+        // Task.status=req.body.status;
+        res.status(200).json({
+            message: "Successfully Edited",
+            success: 'true',
+            data: updateStatus
+        })
+       
+    }
+    catch (error) {
+        res.status(404).json({
+            success: 'fail',
+            message: error
+        });
+
+    }
+})
+
+
 
 //task report
 app.post("/taskreport", async (req, res) => {
@@ -234,16 +272,16 @@ app.get("/tasks", async (req, res) => {
 
 app.get('/users', (req, res) => {
     User.find({ role: { $ne: 'admin' } }).exec((err, users) => {
-    
+
         if (err) {
-         
+
             return res.status(400).json({
                 success: false,
                 error: err
             })
 
         }
-      
+
         return res.status(200).json
 
             ({
@@ -310,29 +348,26 @@ app.put("/users/update/:id", async (req, res) => {
 app.get('/projects', (req, res) => {
     // Project.find().exec((err, projects) => {
 
-        Project
+    Project
         .find()
-        .populate('assignto') // only works if we pushed refs to person.eventsAttended
-        .exec(function(err, projects) {
-        //Project.aggregate([{ $lookup: {from : "User", localField: "_id", foreignField: "assignto", as : "firstName"}}]).exec((err, projects) => {
-        console.log("id as name",projects)
-        if (err) {
-            // console.log(users)
-            return res.status(400).json({
-                success: false,
-                error: err
-            })
-
-        }
-        console.log("data", projects)
-        return res.status(200).json
-
-            ({
-                success: true,
-                projects: projects
-            })
-
-    })
+        .populate('options') // only works if we pushed refs to person.eventsAttended
+        .exec(function (err, projects) {
+            //Project.aggregate([{ $lookup: {from : "User", localField: "_id", foreignField: "assignto", as : "firstName"}}]).exec((err, projects) => {
+            console.log("id as name", projects)
+            if (err) {
+                // console.log(users)
+                return res.status(400).json({
+                    success: false,
+                    error: err
+                })
+            }
+            console.log("data", projects)
+            return res.status(200).json
+                ({
+                    success: true,
+                    projects: projects
+                })
+        })
 
 
 
@@ -379,11 +414,11 @@ app.get('/users/projects/:id', (req, res) => {
     let projectId = req.params.id;
     //console.log(projectId)
 
-    Project.find({assignto : projectId}, (err, projects) => {
+    Project.find({ assignto: projectId }, (err, projects) => {
         if (err) {
             return res.status(400).json({ success: false, err })
         }
-        console.log("projects",projects)
+        console.log("projects", projects)
         return res.status(200).json
             ({
                 success: true,

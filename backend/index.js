@@ -8,6 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cors());
+const keys = require("./config/keys");
 
 //Db connection
 var url = "mongodb://0.0.0.0:27017/tasktracking";
@@ -79,10 +80,60 @@ app.post("/Login", (req, res) => {
     User.findOne({ email: email }, (err, user) => {
         if (user) {
             bcrypt.compare(password, user.password).then((status) => {
+
+                console.log("passw",password,user.password,status);
                 if (status) {
 
+
+                    // const payload = {
+                    //     id: user.id,
+                    //     name: user.firstname
+                 
+                    // };
+    
+                    // const keys = {
+                    //     secretOrKey: 'mySecretKey', // Replace with your secret key
+                    //   };
+
+
+                    // const token = jwt.sign(
+                    //     {}, // Payload (optional)
+                    //     keys.secretOrKey,
+                    //     {
+                    //       expiresIn: '1y' // 1 year
+                    //     }
+                    //   );
+                    //   console.log("token",token);
+                    jwt.sign(
+                     {},
+                        keys.secretOrKey,
+                        {
+                            expiresIn: 31556926 // 1 year in seconds
+                            
+                        },
+                        (err, token) => {
+                          
+
+                            // req.session.id=user.id;
+                            // req.session.save();
+
+                            // localStorage.setItem("UserId", sres.rows.refno);
+                            // localStorage.setItem("token", token);
+
+                            // res.send.json({
+                            //     success: true,
+                            //     message: "Login Success",
+                            //     Result: user,
+                            //     token: "Bearer " + token
+                            // });
+
+                            
+                            res.send({  success: true,message: "login successfully", user: user,token: "Bearer " + token })
+                        }
+                    );
+
                     res.status = true
-                    res.send({ message: "login successfully", user: user })
+                   
                 }
                 else {
 
@@ -96,6 +147,22 @@ app.post("/Login", (req, res) => {
         }
     })
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //Add User or register 

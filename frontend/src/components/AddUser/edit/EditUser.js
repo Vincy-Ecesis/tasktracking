@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import valid from '../../valid';
+import { AiOutlineClose } from 'react-icons/ai'
 import {
     BrowserRouter as Router,
     Switch,
@@ -20,6 +21,8 @@ export default function EditUser() {
         email: "",
         role: "",
     })
+
+    const [close, setClose] = useState(false);
 
 
     useEffect(() => {
@@ -74,8 +77,11 @@ export default function EditUser() {
     return (
         <div>
             <>
-                <div className="container">
+                <div className="add-project">
                     <div className="app-wrapper">
+                    <div className='close-icon' onClick={() => setClose(!close)}>
+                <AiOutlineClose />
+              </div>
                         <div>
                             <h2 className="title" style={{ marginTop: '10px' }}>
                                 Edit User Details

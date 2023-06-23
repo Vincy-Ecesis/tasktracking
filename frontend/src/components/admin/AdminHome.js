@@ -15,6 +15,7 @@ import Report from '../Report/Report';
 import ManageTasks from './ManageTasks';
 import ManageProjects from './ManageProjects.js';
 import Dashboard from './dashboard';
+import authHOC from '../config/authHOC';
 // import { MDBContainer } from "mdb-react-ui-kit";
 
 const AdminHome = () => {
@@ -96,4 +97,4 @@ const AdminHome = () => {
     )
 }
 
-export default AdminHome
+export default authHOC(AdminHome)

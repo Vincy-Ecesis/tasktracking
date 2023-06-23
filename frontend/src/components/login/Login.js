@@ -34,16 +34,29 @@ const Login = ({ setLoginUser }) => {
                 alert(res.data.message)
                 setLoginUser(res.data.user)
                 localStorage.setItem('currentUser', JSON.stringify(res.data))
-                if (res.data.user.role === 'Admin') {
-                    //localStorage.setItem('currentUser', JSON.stringify(res.data))
-                    navigate('/admin')
+                localStorage.setItem('token', JSON.stringify(res.data.token))
+                if(res.data.token){
 
+                    if(res.data.user.role=== 'Admin'){
+                        navigate('/admin')
+                    }
+                    else{
+                        navigate("/user")
+                    }
                 }
-                else {
-                    //localStorage.setItem('currentUser', JSON.stringify(res.data))
-                    navigate("/user")
+                else{
+                    alert("authentication failed")
+                }
+                // navigate('/admin')
+                // if (res.data.user.role === 'Admin') {
+                //     //localStorage.setItem('currentUser', JSON.stringify(res.data))
+                //     navigate('/admin')
 
-                }
+                // }
+                // else {
+                //     //localStorage.setItem('currentUser', JSON.stringify(res.data))
+                //     navigate("/user")
+                // }
             }
         )
     }

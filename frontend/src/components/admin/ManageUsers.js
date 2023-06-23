@@ -7,7 +7,9 @@ import { RiDeleteBin6Line } from 'react-icons/ri'
 import { RiEdit2Line } from 'react-icons/ri'
 import { BsSearch } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom';
-import AddUser from '../AddUser/AddUser'
+import AddUser from '../AddUser/AddUser';
+import { AiOutlineClose } from 'react-icons/ai';
+import EditUser from '../AddUser/edit/EditUser';
 
 
 const Admin = () => {
@@ -87,9 +89,8 @@ const Admin = () => {
     })
   };
 
-
-
   const [inputs, setInputs] = useState({});
+  const[editView,setEditView]=useState();
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -114,6 +115,9 @@ const Admin = () => {
       })
   }
 
+  const viewEdit=()=>{
+    setEditView(!editView);
+  }
 
   return (
 
@@ -124,7 +128,7 @@ const Admin = () => {
         </div> */}
 
 
-      {!showadduser && (
+      {/* {!showadduser && ( */}
         <div className='"table table-striped"'>
           <div className='manage d-flex justify-content-center'>
             <div className='manage-heading' >Manage Users</div>
@@ -163,10 +167,14 @@ const Admin = () => {
                       <td>{users.lastname}</td>
                       <td>{users.email}</td>
                       {/* <td>{users.role}</td> */}
-                      <td><a className='btn btn-warning'
+                      {/* <td><a className='btn btn-warning'
                         href={`/edituser/${users._id}`}
                       ><RiEdit2Line />
-                      </a></td>
+                      </a></td> */}
+
+                      <td onClick={viewEdit}>
+                      <RiEdit2Line />
+                     </td>
 
                       <td><button
                         className="btn btn-primary"
@@ -183,17 +191,26 @@ const Admin = () => {
             </tbody>
           </Table>
         </div>
+      {/* )} */}
+
+      {editView &&(
+        <div>
+         <EditUser />
+        </div>
       )}
 
 
       {showadduser && (
         <>
-          <div style={{ marginTop: '30px' }}>
+          {/* <div style={{ marginTop: '30px' }}>
             <a style={{ float: 'right' }} className='add-user-link' onClick={() => setShowadduser(!showadduser)}>Manage Users</a>
-          </div>
+          </div> */}
 
-          <div className="container register-section">
+          <div className="add-project">
             <div className="app-wrapper">
+            <div className='close-icon' onClick={() => setShowadduser(!showadduser)}>
+                <AiOutlineClose />
+              </div>
               <div>
                 <h2 className="title" style={{ marginTop: '10px' }}>
                   Create User

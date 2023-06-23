@@ -48,19 +48,13 @@ const ViewProject = () => {
   }, [])
 
 
-  // const [assigned, setAssigned]=useState([])
   //get All Users
   const getProjects = () => {
     axios.get('http://localhost:8000/projects').then(res => {
 
       if (res.data.success) {
 
-        console.log("projectss list", res.data.projects)
-        // this.setState({
-        //   projects: res.data.projects,
-
-        // });
-
+  
         var projectDetails = res.data.projects, i = 0, j = 0;
 
         projectDetails.forEach(element => {
@@ -70,81 +64,19 @@ const ViewProject = () => {
           const Assigned = [];
           for (j = 0; j < element.options.length; j++) {
 
-
-            // setAssigne(element.options.firstname);
             Assigned.push(element.options[j].firstname)
 
             const NewAssigned = [...assigne, Assigned];
             setAssigne(NewAssigned);
-            console.log("Its working", Assigned, assigne);
 
-            if (assigne == null) {
-              console.log("valueeeeee")
-            }
-            else {
-
-            }
-
-            // setAssigned([element.options[j].firstname])
           }
 
-          // setAssigne(Assigned);
-          console.log("Its working 2", Assigned, assigne);
-
-          // setTotal([...total, Assigned]);
           setTotal(total => [...total, Assigned]);
-          // setTotal(Assigned);
-          console.log("total", total)
-
-          // console.log("first name",assigned)
-          // console.log("Element", element.options);
-          // element.options.forEach(option=>{
-          //   //console.log("options",option);
-
-          //     // projectDetails[i].assignto = option.firstname;
-          //     setAssigne(option.firstname);
-          //     console.log("assign tooo",option.firstname)
-
-          //    // console.log("array",assigne)
-          //   //  setAssigne(option.firstname);
-          //    //console.log("array second",assigne)
-
-          //   //  const updatedValues = [...assigne,option.firstname];
-
-          //   //  console.log("updated values",updatedValues,assigne)
-
-          //   //  if(assigne.length==0){
-          //   //   setAssigne(option.firstname);
-          //   //  }
-          //   //  else{
-          //   //   setAssigne(option.firstname);
-          //   //  }
-
-          //    console.log("assingeesssss",assigne);
-
-          //  j++;
-
-          // })
-
-          // if (element.options != undefined) {
-          //   projectDetails[i].assignto = element.options.firstname;
-
-          //   console.log("project details",projectDetails[i].assignto)
-          // }
-          // else {
-          //   projectDetails[i].assignto = "";
-          // }
           i++;
-
-          // console.log("in assign",Assigned);
         });
 
-        console.log("Its working 3", assigne);
-        // if (assigne.trim() !== '') {
-        //   setAssignes([...assignes, assigne]);
-        //   setAssigne('');
-        // }
-        // console.log("assingeesssss",assigne);
+      
+        
 
         setProjects(projectDetails)
         //this.state.users.sort();
@@ -231,9 +163,8 @@ const ViewProject = () => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    //   alert(inputs);
-    console.log("hhh", selectedOptions)
-    // let total={inputs,selectedOptions}
+   
+   
 
     axios.post("http://localhost:8000/addproject", {
       method: 'POST',

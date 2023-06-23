@@ -22,8 +22,10 @@ import UserHome from './components/UserDashboard/UserHome';
 
 
 function App() {
-  const [user, setLoginUser] = useState("")
+ 
+  const token = localStorage.getItem('token');
 
+  const [user, setLoginUser] = useState(token)
 
   useEffect(() => {
     // // check user here

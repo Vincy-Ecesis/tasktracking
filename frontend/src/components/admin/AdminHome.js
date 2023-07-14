@@ -20,7 +20,7 @@ import authHOC from '../config/authHOC';
 
 const AdminHome = () => {
 
-    const [gggh,fdgf]=useState();
+
     const logout = () => {
         localStorage.removeItem('currentUser');
         window.location.href = "/";
@@ -48,9 +48,9 @@ const AdminHome = () => {
                             <Nav.Item>
                                 <Nav.Link eventKey="fifth">Reports</Nav.Link>
                             </Nav.Item>
-                            <Nav.Item>
+                            {/* <Nav.Item>
                                 <Nav.Link eventKey="sixth">Logout</Nav.Link>
-                            </Nav.Item>
+                            </Nav.Item> */}
                         </Nav>
                     </Col>
                     <Col sm={9}>

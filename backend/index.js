@@ -81,7 +81,7 @@ app.post("/Login", (req, res) => {
         if (user) {
             bcrypt.compare(password, user.password).then((status) => {
 
-                console.log("passw",password,user.password,status);
+              
                 if (status) {
 
 
@@ -198,10 +198,10 @@ app.post("/adduser", (req, res) => {
 //Add Projects
 app.post("/addproject", (req, res) => {
 
-    console.log("reques",req.body.body,JSON.parse(req.body.body));
+    
     
     const { projectname, description,options}= JSON.parse(req.body.body);
-    console.log("assign to",options);
+    // console.log("assign to",options);
     const project = new Project({
         projectname,
         description,
@@ -210,14 +210,14 @@ app.post("/addproject", (req, res) => {
     project.save(
         res.send({ message: "Project Added Successfully.", project: project })
     )
-    console.log("Projects", project)
+    // console.log("Projects", project)
 })
 
 
 //Add Daily tasks
 app.post("/dailytask", (req, res) => {
     const { username, dailytask, project, estimatedtime,status } = req.body;
-    console.log("req.body", req.body);
+    
     const date = new Date();
     const task = new Task({
         username,
@@ -230,7 +230,7 @@ app.post("/dailytask", (req, res) => {
     task.save(
         res.send({ message: "Successfully Registered.", task: task })
     )
-    console.log("daily task", task);
+    // console.log("daily task", task);
 })
 
 
@@ -240,7 +240,7 @@ app.put("/dailytaskStatus/update/:id", async (req, res) => {
     // console.log(id)
     const updateId = req.params.id;
     // const  status  = req.body.status;
-    console.log("status node",req.body.status)
+   
     try {
 
         const updateStatus = await Task.findByIdAndUpdate(updateId, {
@@ -263,10 +263,8 @@ app.put("/dailytaskStatus/update/:id", async (req, res) => {
             success: 'fail',
             message: error
         });
-
     }
 })
-
 
 
 //task report
@@ -313,7 +311,7 @@ app.post("/taskreport", async (req, res) => {
 app.get("/tasks", async (req, res) => {
     //const role = req.body;
     Task.find().exec((err, tasks) => {
-        console.log("tasks list", tasks)
+        // console.log("tasks list", tasks)
         if (err) {
             // console.log(users)
             return res.status(400).json({
@@ -382,7 +380,7 @@ app.put("/users/update/:id", async (req, res) => {
 
     // console.log(id)
     const updateId = req.params.id;
-    //console.log(updateId)
+   
     try {
 
         var updateUser = await User.findByIdAndUpdate(req.params.id, {
@@ -396,6 +394,7 @@ app.put("/users/update/:id", async (req, res) => {
                 cpassword: req.body.password
             }
         });
+        console.log("updated value",updateUser);
         res.status(200).json({
             message: "Successfully Edited",
             success: 'true',
@@ -420,7 +419,8 @@ app.get('/projects', (req, res) => {
         .populate('options') // only works if we pushed refs to person.eventsAttended
         .exec(function (err, projects) {
             //Project.aggregate([{ $lookup: {from : "User", localField: "_id", foreignField: "assignto", as : "firstName"}}]).exec((err, projects) => {
-            console.log("id as name", projects)
+         
+            
             if (err) {
                 // console.log(users)
                 return res.status(400).json({
@@ -428,7 +428,7 @@ app.get('/projects', (req, res) => {
                     error: err
                 })
             }
-            console.log("data", projects)
+           
             return res.status(200).json
                 ({
                     success: true,
@@ -460,7 +460,8 @@ app.get('/projects', (req, res) => {
 app.get('/projects/:id', (req, res) => {
 
     let projectId = req.params.id;
-    console.log(projectId)
+
+    
 
     Project.findById(projectId, (err, projects) => {
         if (err) {
@@ -478,19 +479,20 @@ app.get('/projects/:id', (req, res) => {
 // get Project By Id
 app.get('/users/projects/:id', (req, res) => {
 
-    let projectId = req.params.id;
+    let userId = req.params.id;
     //console.log(projectId)
 
-    Project.find({ assignto: projectId }, (err, projects) => {
+    User.find({ assignto: userId }, (err, projects) => {
         if (err) {
             return res.status(400).json({ success: false, err })
         }
-        console.log("projects", projects)
+        console.log(projects)
         return res.status(200).json
             ({
                 success: true,
                 projects
             })
+           
     })
 })
 
@@ -499,7 +501,8 @@ app.get('/users/projects/:id', (req, res) => {
 app.put("/projects/update/:id", async (req, res) => {
 
     const updateId = req.params.id;
-    console.log(updateId)
+ 
+    
     try {
         var updateProject = await Project.findByIdAndUpdate(req.params.id, {
 
@@ -544,7 +547,8 @@ app.put("/projects/update/:id", async (req, res) => {
 //Delete user
 app.delete("/delete/:id", async (req, res) => {
 
-    console.log("delete", req.params.id)
+   
+    
 
     try {
 
@@ -561,7 +565,8 @@ app.delete("/delete/:id", async (req, res) => {
 //Delete Task
 app.delete("/deleteTask/:id", async (req, res) => {
 
-    console.log("delete", req.params.id)
+
+    
 
     try {
 

@@ -3,18 +3,18 @@
     margin-top:20px;
     column-gap: 55px;
     text-align: center;
+    overflow-y: hidden;
 }
 
 .user-project1{
 
     width: 240px;
     height: 224px;
-    background-color: #CDFCF6;
-    border:7px solid #6dddce;
-    border-radius:25px;
-    
+    border: 7px solid #c76586;
+    border-radius: 25px;
+    background: linear-gradient(to right,#372c3a,#e14f80);
 }
-
+ 
 .user-project1 h4{
     border-bottom: 1px solid #000;
     text-align: center;

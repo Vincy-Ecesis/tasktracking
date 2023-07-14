@@ -341,7 +341,6 @@ function ViewTasks() {
                             /> */}
 
                   <input type="datetime-local" name="estimatedtime" className='input' value={inputs.estimatedtime} onChange={handleChange} />
-
                 </div>
                 {/* <div>
                   <label>Status</label>

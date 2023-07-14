@@ -73,3 +73,8 @@
 .search-bar{
     margin:50px 0px;
 }
+
+.main-project{
+    overflow-y: hidden;
+    height: calc(100vh - 80px);
+}

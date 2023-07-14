@@ -8,32 +8,31 @@ import { RiEdit2Line } from 'react-icons/ri'
 import { BsSearch } from 'react-icons/bs'
 import { Link } from 'react-router-dom';
 import { AiOutlineClose } from 'react-icons/ai'
-
+import { useNavigate } from 'react-router-dom';
 import AddProjectForm from '../AddProjects/AddProjects';
 import './manageproject.css';
-
+import valid from './valid';
 
 const ViewProject = () => {
   // var storing = localStorage.getItem('currentUser');
   // var currentuser = JSON.parse(storing)
-
   // constructor(props) {
-
   //   super(props);
   //   this.state = {
   //     projects: [],
   //   }
   // }
 
-
+  const navigate = useNavigate()
   const [projects, setProjects] = useState();
   const [showaddproject, setShowaddproject] = useState();
   const [showAssignees, setShowAssignees] = useState();
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [users, setUsers] = useState();
   const [assigne, setAssigne] = useState([]);
-
+  const [projAllocated, setProjallocated] = useState([]);
   const [total, setTotal] = useState([]);
+  const [totalPersons,setTotalPersons]=useState([]);
   // const [assignes, setAssignes] = useState([]);
   //   users=this.state.users;
   //lifecycle hook for get users
@@ -54,7 +53,7 @@ const ViewProject = () => {
 
       if (res.data.success) {
 
-  
+
         var projectDetails = res.data.projects, i = 0, j = 0;
 
         projectDetails.forEach(element => {
@@ -75,8 +74,6 @@ const ViewProject = () => {
           i++;
         });
 
-      
-        
 
         setProjects(projectDetails)
         //this.state.users.sort();
@@ -88,8 +85,8 @@ const ViewProject = () => {
     // console.log("in assign",Assigned);
     // console.log("assigned",Assigned)
   }
-  console.log("total out", total)
-  console.log("Its working 4", assigne);
+  // console.log("total out", total)
+  // console.log("Its working 4", assigne);
   //get All Users
   const getUsers = () => {
     axios.get('http://localhost:8000/users').then(res => {
@@ -101,7 +98,7 @@ const ViewProject = () => {
         // });
         setUsers(res.data.users)
         //this.state.users.sort();
-        console.log("users", users)
+        // console.log("users", users)
 
       }
     });
@@ -118,7 +115,6 @@ const ViewProject = () => {
       axios.delete(`http://localhost:8000/deleteTask/${projects._id}`).then(res => {
 
         console.log("Deleted Successfully", res)
-
         alert("Deleted Successfully")
         getProjects();
 
@@ -153,7 +149,6 @@ const ViewProject = () => {
   };
 
   const [inputs, setInputs] = useState({});
-
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -162,10 +157,6 @@ const ViewProject = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-
-   
-   
-
     axios.post("http://localhost:8000/addproject", {
       method: 'POST',
       headers: {
@@ -200,13 +191,103 @@ const ViewProject = () => {
       .filter((option) => option.selected)
       .map((option) => option.value);
     setSelectedOptions(selectedValues);
-
     console.log("selected options", selectedOptions);
   };
 
   const viewAssignees = () => {
 
   }
+
+  const [values, setValues] = useState({
+    projectname: "",
+    description: "",
+
+   
+
+  })
+  const [editView, setEditView] = useState();
+  const [myArray, setMyArray] = useState([]);
+  //get user by id
+  const getProjectById = (projects) => {
+    setEditView(!editView);
+    console.log("id in useEffect", users)
+    axios.get(`http://localhost:8000/projects/${projects._id}`).then(res => {
+
+      if (res.data.success) {
+
+        setValues(res.data.projects)
+        // console.log("valuess", res.data.projects);
+
+        let options = res.data.projects.options
+
+        // console.log("options", options, users)
+        setMyArray([])
+        const AssignedPerson = [];
+        for (let i = 0; i <= options.length - 1; i++) {
+
+          for (let j = 0; j <= users.length - 1; j++) {
+            if (options[i] == users[j]._id) {
+
+              // console.log("name", users[j].firstname, users[0]._id)
+              AssignedPerson.push(users[j].firstname);
+              // const newArray = [users[j].firstname];
+              setMyArray((myArray)=>[...myArray, users[j].firstname]);
+    // setMyArray(newArray);
+              // const NewAssigned = [...assigne, Assigned];
+              // setAssigne(NewAssigned);
+              // const NewAssignedPerson = [...projAllocated,AssignedPerson];
+
+              // console.log("people",NewAssignedPerson[0])
+              // setProjallocated(users[j].firstname);
+              // setProjallocated(NewAssignedPerson);
+              // setProjallocated(NewAssignedPerson);
+              // console.log("project allocation",projAllocated);
+            }
+          }
+          // setTotalPersons(totalPersons => [...totalPersons, projAllocated]);
+          // console.log("Prsonn",totalPersons);
+        }
+       // useEffect to log the updated myArray
+
+        // console.log("people outt",AssignedPerson)
+        // setProjallocated( (projAllocated) => [...projAllocated,AssignedPerson])
+        
+      }
+    });
+  }
+
+  useEffect(() => {
+    console.log("my array", myArray);
+  }, [myArray]);
+
+
+  const handleInputChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value })
+  }
+
+  const nameValid = /^[A-z][A-z]{3,23}$/;
+  const [errors, setErrors] = useState({});
+  const editProject = (event) => {
+
+    event.preventDefault();
+    setErrors(valid(values));
+    const { projectname, description,myArray } = values;
+    if (nameValid.test(projectname)) {
+      const data = {
+        projectname: projectname,
+        description: description,
+        myArray:myArray
+      };
+      console.log("data",data)
+      axios.put(`http://localhost:8000/projects/update/${projects._id}`, data).then((res) => {
+        if (res.data.success) {
+          console.log("Updated Successfully")
+          alert(res.data.message)
+          navigate('/admin')
+        }
+      });
+    }
+  };
 
   return (
     <>
@@ -251,18 +332,21 @@ const ViewProject = () => {
                 projects.map(projects =>
                   <tr key={projects._id}>
                     <td>{projects.projectname}</td>
-                    <td>{projects.description}</td>{
+                    <td>{projects.description}</td>
+                    <td >
+                    {
                       projects.options.map(
-                        option=><div  key={option._id} >
-                         {option.firstname}
+                        option => <div key={option._id} >
+                          {option.firstname}
                         </div>
                       )
                     }
+                      </td>
                     {/* <td>{projects.options[0].firstname}</td> */}
                     {/* <td  onClick={() => setShowAssignees(!showAssignees)}><button>view</button></td> */}
 
 
-             {/* {total.map((array, index) => (
+                    {/* {total.map((array, index) => (
         <div key={index}>
           {array.map((value, innerIndex) => (
             <span key={innerIndex}>{value} </span>
@@ -279,10 +363,17 @@ const ViewProject = () => {
 
                     {/* <td>{projects.assignto}</td> */}
                     {/* <td>{projects.projectimage}</td> */}
-                    <td><a className='btn btn-warning'
+                    <td>
+                      {/* <a className='btn btn-warning'
                       href={`/editproject/${projects._id}`}
                     ><RiEdit2Line />
-                    </a></td>
+                    </a> */}
+
+                      <button className='btn btn-warning' onClick={() => { getProjectById(projects) }}
+
+                      ><RiEdit2Line />
+                      </button>
+                    </td>
                     <td><button
                       className="btn btn-primary"
                       onClick={() => { del(projects) }}
@@ -347,19 +438,16 @@ const ViewProject = () => {
                   <label >Assign to</label>
                   <br />
                   <div >
-
-
-                    <select multiple type="text"
+                    <select multiple
                       name="assignto"
-                      className='input'
+                      id="dropdown"
+                      className='assign-to'
                       value={selectedOptions}
                       onChange={handleOptionChange}
-                      placeholder="Role"
+
                     >
                       {
-
                         users.map(users =>
-
                           <option value={users._id}>{users.firstname}</option>
                         )
                       }
@@ -412,6 +500,84 @@ const ViewProject = () => {
 
         </>
       )}
+
+
+
+      {
+        editView && (
+          <div className='add-project'>
+            <div className="app-wrapper">
+
+              <div >
+                <div className='close-icon' onClick={() => setEditView(!editView)}>
+                  <AiOutlineClose />
+                </div>
+                <h2 className="title" style={{ marginTop: '10px' }}>
+                  Edit Project Details
+                </h2>
+              </div>
+              <form >
+                <div className="firstname">
+                  <label >Project Name</label>
+                  <input type="text"
+                    id="create-account-firstname"
+                    className="input"
+                    name="projectname"
+                    value={values.projectname}
+                    onChange={handleInputChange}
+                    placeholder="Project Name" />
+                </div>
+                {errors.projectname && <p className="error">{errors.projectname}</p>}
+                <div className="description">
+                  <label >Description</label>
+                  <input type="text"
+                    id="create-account-lastname"
+                    className="input"
+                    name="description"
+                    value={values.description}
+                    onChange={handleInputChange}
+                    placeholder="Description" />
+                </div>
+                {errors.description && <p className="error">{errors.description}</p>}
+
+                <div className="role">
+                  <label >Assign to</label>
+                  <br />
+                  <select multiple
+                    name="assignto"
+                    id="dropdown"
+                    className='assign-to'
+                    value={myArray}
+                    onChange={handleOptionChange}
+                  >
+                    {
+                      users.map(users =>
+                        <option value={users.firstname}>{users.firstname}</option>
+                      )
+                    }
+                    <option>{projAllocated[0]}</option>
+                  </select>
+                </div>
+                {/* <div className="email">
+                                <label >Email</label>
+                                <input type="email"
+                                    id="create-account-email"
+                                    className="input"
+                                    name="email"
+                                    value={values.email}
+                                    onChange={handleInputChange}
+                                    placeholder="Email" />
+                            </div>
+                            {errors.email && <p className="error">{errors.email}</p>} */}
+                <button type="submit" className="submit" onClick={editProject} >
+                  Save
+                </button>
+                <br />
+              </form>
+            </div>
+          </div>
+        )
+      }
 
     </>
   )

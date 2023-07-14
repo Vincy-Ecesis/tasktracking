@@ -46,8 +46,6 @@ export default function EditProjects() {
             const data = {
                 projectname: projectname,
                 description: description,
-               
-
             };
             console.log(data)
             axios.put(`http://localhost:8000/projects/update/${id}`, data).then((res) => {

@@ -6,29 +6,27 @@ import { Table, Button } from 'react-bootstrap'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 import { RiEdit2Line } from 'react-icons/ri'
 import { BsSearch } from 'react-icons/bs'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,useParams} from 'react-router-dom';
 import AddUser from '../AddUser/AddUser';
 import { AiOutlineClose } from 'react-icons/ai';
 import EditUser from '../AddUser/edit/EditUser';
-
+import valid from '../AddProjects/valid';
+import { usePagination } from '@table-library/react-table-library/pagination';
 
 const Admin = () => {
-  // var storing = localStorage.getItem('currentUser');
-  // var currentuser = JSON.parse(storing)
-  //  navigate = useNavigate();
-  // constructor(props) {
 
-  //   super(props);
-  //   this.state = {
-  //     users: [],
-  //   }
-  // }
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(2);
+
+  // Render pagination controls
+
   const [users, setUsers] = useState();
-
   const [showadduser, setShowadduser] = useState();
 
   useEffect(() => {
     getUsers();
+ 
   }, [])
 
 
@@ -42,13 +40,39 @@ const Admin = () => {
 
         // });
         setUsers(res.data.users)
-        //this.state.users.sort();
-        console.log("users", users)
+        // console.log("lengthhh",res.data.users.length)
+        // //this.state.users.sort();
+      
+        // const usersLength = res.data.users.length
+
+        // console.log("users", usersLength)
 
       }
     });
   }
 
+
+  // const pageNumbers = Math.ceil(users.length / itemsPerPage);
+  // const renderPageNumbers = Array.from({ length: pageNumbers }, (_, index) => index + 1);
+
+  //get user by id
+  const getUserById = (users) => {
+    setEditView(!editView);
+    console.log("id in useEffect",users)
+    
+   
+    axios.get(`http://localhost:8000/users/${users._id}`).then(res => {
+
+
+        if (res.data.success) {
+
+            setValues(res.data.users)
+
+        }
+      
+    });
+  
+}
 
   //Delete User
   const del = (users) => {
@@ -59,6 +83,7 @@ const Admin = () => {
 
         alert("Deleted Successfully")
         getUsers();
+        
 
       })
     }
@@ -114,10 +139,81 @@ const Admin = () => {
 
       })
   }
-
-  const viewEdit=()=>{
+const [editid,setEditid]=useState();
+  const viewEdit=(users)=>{
     setEditView(!editView);
+   console.log("users id",users._id)
+    // setEditid(editid);
+    getUserById(users);
   }
+
+  // let { id } = useParams();
+
+  const navigate = useNavigate()
+  const [values, setValues] = useState({
+      firstname: "",
+      lastname: "",
+      email: "",
+      role: "",
+  })
+
+  const [close, setClose] = useState(false);
+
+
+
+
+  const emailValid = RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/);
+  const passwordValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+  const nameValid = /^[A-z][A-z]{3,23}$/;
+  const [errors, setErrors] = useState({});
+
+
+
+ // Change the current page
+ const paginate = (pageNumber) => {
+  setCurrentPage(pageNumber);
+};
+
+
+  const handleInputChange = (event) => {
+      setValues({ ...values, [event.target.name]: event.target.value })
+  }
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+    var option = window.confirm(`Are You sure Want to edit  ${users.firstname} records?`)
+
+    if(option){
+      setErrors(valid(values));
+      setEditView(!editView)
+      console.log("value",values);
+      const { firstname, lastname, email, role } = values;
+      // if (nameValid.test(firstname)
+      //     && nameValid.test(lastname)
+      //     && emailValid.test(email) && role) {
+          const data = {
+              firstname: firstname,
+              lastname: lastname,
+              email: email,
+              role: role,
+          };
+          console.log("updated data",data)
+          axios.put(`http://localhost:8000/users/update/${values._id}`, data).then((res) => {
+
+          console.log("response",res)
+          setEditView(!editView)
+              if (res.data.success) {
+                  console.log("Updated Successfully")
+                  alert(res.data.message)
+                  getUsers();
+                  // navigate('/admin')
+              }
+          });
+    }
+    
+      
+      
+  };
 
   return (
 
@@ -148,7 +244,7 @@ const Admin = () => {
             </div>
           </div>
 
-          <Table striped bordered hover variant="dark">
+          <Table  striped bordered hover variant="dark">
             <thead>
               <tr>
                 <th >Name</th>
@@ -171,11 +267,13 @@ const Admin = () => {
                         href={`/edituser/${users._id}`}
                       ><RiEdit2Line />
                       </a></td> */}
-
-                      <td onClick={viewEdit}>
-                      <RiEdit2Line />
+                      <td >
+                        <button  className="btn btn-warning"
+                        onClick={()=>getUserById(users)}>
+                        <RiEdit2Line />
+                        </button>
+                      
                      </td>
-
                       <td><button
                         className="btn btn-primary"
                         onClick={() => { del(users) }}
@@ -190,12 +288,89 @@ const Admin = () => {
               }
             </tbody>
           </Table>
+ {/* <ul>
+        {renderPageNumbers.map((number) => (
+          <li key={number}>
+            <button onClick={() => paginate(number)}>{number}</button>
+          </li>
+        ))}
+      </ul>  */}
         </div>
       {/* )} */}
 
       {editView &&(
         <div>
-         <EditUser />
+         {/* <EditUser /> */}
+         <div className="add-project">
+                    <div className="app-wrapper">
+                    <div className='close-icon' onClick={() => setEditView(!editView)}>
+                <AiOutlineClose />
+              </div>
+                        <div>
+                            <h2 className="title" style={{ marginTop: '10px' }}>
+                                Edit User Details
+                            </h2>
+                        </div>
+                        <form >
+                            <div className="firstname">
+                                <label >Name</label>
+                                <input type="text"
+                                    id="create-account-firstname"
+                                    className="input"
+                                    name="firstname"
+                                    value={values.firstname}
+                                    onChange={handleInputChange}
+                                    placeholder="First Name" />
+                            </div>
+                            {errors.firstname && <p className="error">{errors.firstname}</p>}
+                            <div className="lastname">
+                                <label >Last Name</label>
+                                <input type="text"
+                                    id="create-account-lastname"
+                                    className="input"
+                                    name="lastname"
+                                    value={values.lastname}
+                                    onChange={handleInputChange}
+                                    placeholder="Last Name" />
+                            </div>
+                            {errors.lastname && <p className="error">{errors.lastname}</p>}
+                            <div className="email">
+                                <label >Email</label>
+                                <input type="email"
+                                    id="create-account-email"
+                                    className="input"
+                                    name="email"
+                                    value={values.email}
+                                    onChange={handleInputChange}
+                                    placeholder="Email" />
+                            </div>
+                            {errors.email && <p className="error">{errors.email}</p>}
+                            <div className="role">
+                                <label >Role</label>
+                                <br />
+                                <div >
+                                    <select type="text"
+                                        name="role"
+                                        className='input'
+                                        value={values.role}
+                                        onChange={handleInputChange}
+                                        placeholder="Role"
+                                        style={{ width: '400px', height: '40px' }} >
+                                        <option value="0" style={{ color: 'black' }} className='input'>Choose Your Role</option>
+                                        <option style={{ color: "black" }} value="Admin" className='input'>Admin</option>
+                                        <option style={{ color: "black" }} value="User" className='input'>User</option>
+                                    </select></div>
+                            </div>
+                            {errors.role && <p className="error">{errors.role}</p>}
+
+                            <button type="submit" className="submit" onClick={onSubmit} >
+                               Save
+                            </button>
+                            <br />
+
+                        </form>
+                    </div>
+                </div>
         </div>
       )}
 
@@ -291,8 +466,6 @@ const Admin = () => {
 
                         </div>
                         {errors.cpassword && <p className="error">{errors.cpassword}</p>} */}
-
-
 
                 <button type="submit" className="submit" onClick={handleSubmit} >
                   Add User
